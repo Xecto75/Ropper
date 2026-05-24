@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://b5cy3wpfssvcx"]
+
+[ext_resource type="Script" uid="uid://b357xu3mbkmry" path="res://hex_anchor.gd" id="1_rcund"]
+
+[node name="HexAnchor" type="Area2D" unique_id=1038564232]
+script = ExtResource("1_rcund")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="." unique_id=1179320402]

@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://dfs4rdgesly5s"]
+
+[ext_resource type="Script" uid="uid://cml7pec7f2fwb" path="res://hex_tile.gd" id="1_gtyx1"]
+
+[node name="HexTile" type="Area2D" unique_id=683265057]
+script = ExtResource("1_gtyx1")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="." unique_id=207581331]

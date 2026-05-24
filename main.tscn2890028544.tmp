@@ -1,0 +1,36 @@
+[gd_scene format=3 uid="uid://743pgdsh15vv"]
+
+[ext_resource type="PackedScene" uid="uid://c4kodrcj4y4da" path="res://Rope.tscn" id="2_0xm2m"]
+[ext_resource type="Script" uid="uid://bbm81oano6eof" path="res://hex_grid.gd" id="2_h2yge"]
+[ext_resource type="Script" uid="uid://bayowfxgsvtgw" path="res://health_bar.gd" id="3_h2yge"]
+
+[node name="Main" type="Node2D" unique_id=863002649]
+
+[node name="GridHex" type="Node2D" parent="." unique_id=507122133]
+position = Vector2(33, 160)
+script = ExtResource("2_h2yge")
+
+[node name="GridHex2" type="Node2D" parent="." unique_id=1639058554]
+position = Vector2(33, 160)
+script = ExtResource("2_h2yge")
+
+[node name="Rope" parent="." unique_id=1176228037 instance=ExtResource("2_0xm2m")]
+
+[node name="GameOverLabel" type="Label" parent="." unique_id=966519399]
+visible = false
+offset_left = 384.0
+offset_top = 265.0
+offset_right = 741.0
+offset_bottom = 348.0
+theme_override_font_sizes/font_size = 60
+text = "Game Over !"
+
+[node name="ScoreLabel" type="Label" parent="." unique_id=1336241184]
+offset_left = 497.0
+offset_top = 596.0
+offset_right = 537.0
+offset_bottom = 619.0
+
+[node name="HealthBar" type="Node2D" parent="." unique_id=1093468060]
+position = Vector2(22, 665)
+script = ExtResource("3_h2yge")

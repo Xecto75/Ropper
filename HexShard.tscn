@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://dxavd7b3a6m5w"]
+
+[ext_resource type="Script" uid="uid://c3hfd540w5jkk" path="res://hex_shard.gd" id="1_men7m"]
+
+[node name="HexShard" type="Node2D" unique_id=803487553]
+script = ExtResource("1_men7m")
