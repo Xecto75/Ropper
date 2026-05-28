@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://cwfxnjj1tpsw7"]
+
+[ext_resource type="Script" uid="uid://bopoijbrosvuu" path="res://Scripts/anchor_arc.gd" id="1_7f0nu"]
+
+[node name="AnchorArc" type="Node2D" unique_id=69454121]
+script = ExtResource("1_7f0nu")

@@ -1,11 +1,13 @@
 [gd_scene format=3 uid="uid://743pgdsh15vv"]
 
-[ext_resource type="Script" uid="uid://culudui3thm47" path="res://background.gd" id="1_1bvp3"]
-[ext_resource type="PackedScene" uid="uid://c4kodrcj4y4da" path="res://Rope.tscn" id="2_0xm2m"]
-[ext_resource type="Script" uid="uid://bbm81oano6eof" path="res://hex_grid.gd" id="2_h2yge"]
-[ext_resource type="Script" uid="uid://bayowfxgsvtgw" path="res://health_bar.gd" id="3_h2yge"]
-[ext_resource type="Script" uid="uid://diccrmpj24lrm" path="res://FXLayer.gd" id="5_7mycd"]
-[ext_resource type="Script" uid="uid://dbewjcgfwc1th" path="res://grid_frame.gd" id="5_lquwl"]
+[ext_resource type="Script" uid="uid://culudui3thm47" path="res://Scripts/background.gd" id="1_1bvp3"]
+[ext_resource type="PackedScene" uid="uid://c4kodrcj4y4da" path="res://Scenes/Rope.tscn" id="2_0xm2m"]
+[ext_resource type="Script" uid="uid://bbm81oano6eof" path="res://Scripts/hex_grid.gd" id="2_h2yge"]
+[ext_resource type="Script" uid="uid://bayowfxgsvtgw" path="res://Scripts/health_bar.gd" id="3_h2yge"]
+[ext_resource type="FontFile" uid="uid://4g7q7fs1tq4u" path="res://Assets/Audiowide-Regular.ttf" id="4_344ge"]
+[ext_resource type="Script" uid="uid://diccrmpj24lrm" path="res://Scripts/FXLayer.gd" id="5_7mycd"]
+[ext_resource type="Script" uid="uid://dbewjcgfwc1th" path="res://Scripts/grid_frame.gd" id="5_lquwl"]
+[ext_resource type="FontFile" uid="uid://dlnygxvo218nu" path="res://Assets/FugazOne-Regular.ttf" id="5_ynf5e"]
 
 [node name="Main" type="Node2D" unique_id=863002649]
 
@@ -24,6 +26,7 @@ offset_left = 91.0
 offset_top = 265.0
 offset_right = 448.0
 offset_bottom = 348.0
+theme_override_fonts/font = ExtResource("4_344ge")
 theme_override_font_sizes/font_size = 60
 text = "Game Over !"
 
@@ -32,8 +35,10 @@ offset_left = 185.0
 offset_top = 72.0
 offset_right = 225.0
 offset_bottom = 95.0
+theme_override_fonts/font = ExtResource("5_ynf5e")
 
 [node name="HealthBar" type="Node2D" parent="." unique_id=1093468060]
+visible = false
 z_index = 2
 position = Vector2(52, 814)
 script = ExtResource("3_h2yge")

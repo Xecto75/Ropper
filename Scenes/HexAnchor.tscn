@@ -1,0 +1,11 @@
+[gd_scene format=3 uid="uid://b5cy3wpfssvcx"]
+
+[ext_resource type="Script" uid="uid://b357xu3mbkmry" path="res://Scripts/hex_anchor.gd" id="1_rcund"]
+[ext_resource type="PackedScene" uid="uid://cwfxnjj1tpsw7" path="res://Scenes/AnchorArc.tscn" id="2_ixux3"]
+
+[node name="HexAnchor" type="Area2D" unique_id=1038564232]
+script = ExtResource("1_rcund")
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="." unique_id=1179320402]
+
+[node name="AnchorArc" parent="." unique_id=69454121 instance=ExtResource("2_ixux3")]
