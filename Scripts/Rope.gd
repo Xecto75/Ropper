@@ -1,6 +1,6 @@
 extends Node2D
 
-const ROPE_WIDTH  : float = 8.0
+const ROPE_WIDTH  : float = 4.0
 const ARC_STEPS   : int   = 40
 const SNAP_DIST   : float = 8.0
 
@@ -71,7 +71,6 @@ func release_rope() -> void:
 	is_dragging = false
 	emit_signal("rope_released", intersected_tiles.duplicate(),
 				 loop_detected, loop_polygon)
-	await get_tree().create_timer(3.0).timeout
 	_rope_path        = []
 	_wrapped          = []
 	intersected_tiles = []
@@ -111,17 +110,15 @@ func _tangent_pt(from_pt: Vector2, center: Vector2, radius: float, side: float) 
 
 # ── Wrap / unwrap ─────────────────────────────────────────────
 
-func _prev_exit() -> Vector2:
-	# The point the rope comes FROM when approaching the next peg
+func _from_pt() -> Vector2:
 	if _wrapped.is_empty():
 		return _origin
 	var w = _wrapped.back()
-	# exit = tangent from CURSOR side, using -side
 	return _tangent_pt(_cursor, w.center, w.radius, -w.side)
 
 
 func _try_wrap() -> void:
-	var from : Vector2 = _prev_exit()
+	var from : Vector2 = _from_pt()
 	for anchor in _anchors:
 		if not is_instance_valid(anchor):
 			continue
@@ -129,21 +126,22 @@ func _try_wrap() -> void:
 			continue
 		var center : Vector2 = anchor.global_position
 		var radius : float   = anchor.peg_radius + ROPE_WIDTH * 0.5
+		# Wrap when rope passes within snap distance of peg surface
 		var closest : Vector2 = _closest_on_seg(from, _cursor, center)
-		if closest.distance_to(center) <= radius + SNAP_DIST:
-			# Compute side from cross product at moment of impact — LOCK IT
-			var dc    : Vector2 = center - from
-			var dp    : Vector2 = _cursor - from
-			var cross : float   = dc.x * dp.y - dc.y * dp.x
-			var side  : float   = -1.0 if cross >= 0.0 else 1.0
-			_wrapped.append({
-				"anchor": anchor,
-				"center": center,
-				"radius": radius,
-				"side":   side,
-				"impact": closest  # locked, never recalculated
-			})
-			break
+		if closest.distance_to(center) > radius + SNAP_DIST:
+			continue
+		# Lock side at moment of contact
+		var dc    : Vector2 = center - from
+		var dp    : Vector2 = _cursor - from
+		var cross : float   = dc.x * dp.y - dc.y * dp.x
+		var side  : float   = -1.0 if cross >= 0.0 else 1.0
+		_wrapped.append({
+			"anchor": anchor,
+			"center": center,
+			"radius": radius,
+			"side":   side,
+		})
+		break
 
 
 func _try_unwrap() -> void:
@@ -155,26 +153,28 @@ func _try_unwrap() -> void:
 		return
 	w.center = w.anchor.global_position
 	w.radius = w.anchor.peg_radius + ROPE_WIDTH * 0.5
-	var from_pt : Vector2 = _origin if _wrapped.size() < 2 else _tangent_pt(
+	# Unwrap when cursor comes back past the entry point.
+	# Check if the vector center->cursor has crossed back past center->from_pt.
+	var prev_from : Vector2 = _origin if _wrapped.size() < 2 else _tangent_pt(
 		_cursor, _wrapped[_wrapped.size()-2].center,
 		_wrapped[_wrapped.size()-2].radius, -_wrapped[_wrapped.size()-2].side)
-	var entry : Vector2 = _tangent_pt(from_pt, w.center, w.radius,  w.side)
-	var exit  : Vector2 = _tangent_pt(_cursor, w.center, w.radius, -w.side)
-	var a1 : float = atan2(entry.y - w.center.y, entry.x - w.center.x)
-	var a2 : float = atan2(exit.y  - w.center.y, exit.x  - w.center.x)
-	var sw : float = a2 - a1
-	if w.side > 0 and sw < 0: sw += TAU
-	if w.side < 0 and sw > 0: sw -= TAU
-	# When entry and exit converge, sw goes to TAU (full circle) not 0 due to wrapping.
-	# Treat near-TAU as near-zero: cursor came back to where it started.
-	if abs(sw) < 0.15 or abs(abs(sw) - TAU) < 0.15:
+	# Angle of from_pt seen from center
+	var a_from   : float = atan2(prev_from.y - w.center.y, prev_from.x - w.center.x)
+	# Angle of cursor seen from center
+	var a_cursor : float = atan2(_cursor.y - w.center.y, _cursor.x - w.center.x)
+	# Angular distance cursor has moved FROM the from_pt side
+	var diff : float = a_cursor - a_from
+	while diff > PI:  diff -= TAU
+	while diff < -PI: diff += TAU
+	# If cursor is within 15 degrees of the from_pt angle, unwrap
+	if abs(diff) < 0.26:
 		_wrapped.pop_back()
+
 
 func _is_wrapped(anchor) -> bool:
 	for w in _wrapped:
 		if w.anchor == anchor: return true
 	return false
-
 
 # ── Rebuild rope path ─────────────────────────────────────────
 
@@ -221,6 +221,8 @@ func _rebuild() -> void:
 		var sw : float = a2 - a1
 		if w.side > 0 and sw < 0: sw += TAU
 		if w.side < 0 and sw > 0: sw -= TAU
+		# Cap to avoid full-circle artifact
+		sw = clamp(sw, -(TAU - 0.1), TAU - 0.1)
 
 		for s : int in range(1, ARC_STEPS):
 			var t     : float = float(s) / float(ARC_STEPS)
